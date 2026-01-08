@@ -245,10 +245,27 @@
   overflow: hidden;
   box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
   display: inline-block;
+  /* Container for scaled poster on mobile */
+}
+
+/* Mobile: Scale the poster visually but keep actual 540x540 for export */
+@media (max-width: 600px) {
+  .poster-wrapper {
+    width: 320px;
+    height: 320px;
+    overflow: hidden;
+  }
+  
+  .poster {
+    transform: scale(0.593); /* 320/540 = 0.593 */
+    transform-origin: top left;
+  }
 }
 
 /* =============================================
-   POSTER DESIGN - 540x540 (2x = 1080x1080)
+   POSTER DESIGN - ALWAYS 540x540 (exports to 1080x1080)
+   On mobile, we use transform:scale to shrink visually
+   but keep actual dimensions for correct export
    ============================================= */
 .poster {
   width: 540px;
@@ -256,15 +273,7 @@
   position: relative;
   overflow: hidden;
   font-family: 'Poppins', sans-serif;
-}
-
-@media (max-width: 580px) {
-  .poster {
-    width: 100%;
-    max-width: 360px;
-    height: auto;
-    aspect-ratio: 1;
-  }
+  flex-shrink: 0;
 }
 
 /* Multi-layer background */
@@ -716,7 +725,8 @@
 }
 
 /* =============================================
-   MOBILE RESPONSIVE FIXES
+   MOBILE RESPONSIVE - APP UI ONLY
+   Poster stays at 540x540, scaled via transform
    ============================================= */
 @media (max-width: 580px) {
   /* Header */
@@ -792,230 +802,6 @@
     font-size: 1rem;
     text-align: center;
     width: 100%;
-  }
-  
-  .poster-wrapper {
-    width: 100%;
-    max-width: 320px;
-    margin: 0 auto;
-  }
-  
-  /* POSTER - Fixed size for mobile */
-  .poster {
-    width: 320px;
-    height: 320px;
-  }
-  
-  /* Scale down ALL poster content proportionally */
-  .poster-content {
-    padding: 10px 12px 0 12px;
-  }
-  
-  .summit-badge {
-    padding: 5px 8px;
-    gap: 5px;
-    margin-bottom: 6px;
-    border-radius: 5px;
-  }
-  
-  .badge-logo {
-    width: 22px;
-    height: 22px;
-  }
-  
-  .badge-pakistan {
-    font-size: 6px;
-    letter-spacing: 0.5px;
-  }
-  
-  .badge-summit {
-    font-size: 9px;
-  }
-  
-  .top-section {
-    gap: 10px;
-    margin-bottom: 8px;
-    margin-top: 6px;
-  }
-  
-  .photo-wrapper {
-    width: 90px;
-    height: 90px;
-  }
-  
-  .photo-ring-outer {
-    inset: -4px;
-  }
-  
-  .photo-ring-accent {
-    inset: -2px;
-    border-width: 2px;
-  }
-  
-  .photo-ring-white {
-    border-width: 3px;
-  }
-  
-  .photo-container {
-    inset: 3px;
-  }
-  
-  .photo-placeholder-poster svg {
-    width: 30px;
-    height: 30px;
-  }
-  
-  .photo-badge {
-    padding: 3px 8px;
-    bottom: -3px;
-  }
-  
-  .photo-badge span {
-    font-size: 5px;
-    letter-spacing: 1px;
-  }
-  
-  .attendee-name {
-    font-size: 14px;
-    margin-bottom: 2px;
-  }
-  
-  .attendee-designation {
-    font-size: 10px;
-  }
-  
-  .attendee-company {
-    font-size: 8px;
-    margin-top: 1px;
-  }
-  
-  .attending-section {
-    padding: 6px 0;
-    margin-bottom: 6px;
-    border-radius: 6px;
-  }
-  
-  .attending-text {
-    font-size: 13px;
-    margin-bottom: 1px;
-  }
-  
-  .event-title {
-    font-size: 13px;
-  }
-  
-  .event-details-horizontal {
-    gap: 12px;
-    margin-bottom: 8px;
-    margin-left: 0;
-    justify-content: center;
-  }
-  
-  .detail-item {
-    gap: 5px;
-    flex: unset;
-  }
-  
-  .detail-icon {
-    width: 20px;
-    height: 20px;
-    border-radius: 4px;
-  }
-  
-  .detail-icon svg {
-    width: 11px;
-    height: 11px;
-  }
-  
-  .detail-day {
-    font-size: 6px;
-  }
-  
-  .detail-date {
-    font-size: 8px;
-  }
-  
-  .detail-venue {
-    font-size: 7px;
-    line-height: 1.2;
-  }
-  
-  .poster-footer-white {
-    padding: 5px 10px;
-    gap: 8px;
-    min-height: 35px;
-    margin: 0 -12px;
-  }
-  
-  .sponsor-logo {
-    height: 16px;
-  }
-  
-  .sponsor-logo.dynamics {
-    height: 14px;
-  }
-  
-  .sponsor-logo.mazik {
-    height: 18px;
-  }
-  
-  .sponsor-logo.pug {
-    height: 22px;
-  }
-  
-  .footer-divider {
-    height: 18px;
-  }
-  
-  .community-text {
-    font-size: 5px;
-    max-width: 50px;
-  }
-  
-  /* Accent dots - scale down */
-  .dot-1 { width: 6px; height: 6px; }
-  .dot-2 { width: 4px; height: 4px; }
-  .dot-3 { width: 5px; height: 5px; }
-  .dot-4 { width: 3px; height: 3px; }
-  .dot-5 { width: 4px; height: 4px; }
-  .dot-6 { width: 3px; height: 3px; }
-  
-  /* Background circles - scale down */
-  .circle-1 {
-    width: 180px;
-    height: 180px;
-    bottom: 20px;
-    left: -60px;
-  }
-  
-  .circle-2 {
-    width: 150px;
-    height: 150px;
-    top: -50px;
-    right: -50px;
-  }
-  
-  .circle-3 {
-    width: 100px;
-    height: 100px;
-  }
-  
-  .circle-4 {
-    width: 70px;
-    height: 70px;
-  }
-  
-  /* Wave patterns */
-  .wave-pattern {
-    height: 120px;
-  }
-  
-  .wave-1 {
-    bottom: 25px;
-  }
-  
-  .wave-2 {
-    bottom: 15px;
   }
   
   /* App footer */
