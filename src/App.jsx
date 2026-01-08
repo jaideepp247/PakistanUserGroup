@@ -28,18 +28,38 @@ function App() {
     
     setIsGenerating(true)
     try {
-      // Poster is always 540x540, we use pixelRatio 2 for 1080x1080 output
-      const dataUrl = await toPng(posterRef.current, {
+      const poster = posterRef.current
+      const wrapper = poster.parentElement
+      
+      // Store original styles
+      const originalPosterTransform = poster.style.transform
+      const originalWrapperWidth = wrapper.style.width
+      const originalWrapperHeight = wrapper.style.height
+      const originalWrapperOverflow = wrapper.style.overflow
+      
+      // Temporarily reset transform and wrapper for clean capture
+      poster.style.transform = 'none'
+      wrapper.style.width = '540px'
+      wrapper.style.height = '540px'
+      wrapper.style.overflow = 'visible'
+      
+      // Wait for styles to apply
+      await new Promise(resolve => setTimeout(resolve, 100))
+      
+      // Capture at full size
+      const dataUrl = await toPng(poster, {
         quality: 1,
         pixelRatio: 2,
         cacheBust: true,
         width: 540,
         height: 540,
-        style: {
-          transform: 'scale(1)',
-          transformOrigin: 'top left',
-        }
       })
+      
+      // Restore original styles
+      poster.style.transform = originalPosterTransform
+      wrapper.style.width = originalWrapperWidth
+      wrapper.style.height = originalWrapperHeight
+      wrapper.style.overflow = originalWrapperOverflow
       
       const link = document.createElement('a')
       link.download = `PUG_Summit_2026_${name.replace(/\s+/g, '_') || 'Attendee'}.png`
