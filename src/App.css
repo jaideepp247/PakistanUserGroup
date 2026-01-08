@@ -714,3 +714,313 @@
   font-size: 0.7rem;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
+
+/* =============================================
+   MOBILE RESPONSIVE FIXES
+   ============================================= */
+@media (max-width: 580px) {
+  /* Header */
+  .header {
+    padding: 0.6rem 1rem;
+  }
+  
+  .logo-section {
+    gap: 0.6rem;
+  }
+  
+  .header-logo {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .header-text h1 {
+    font-size: 1rem;
+  }
+  
+  .header-text p {
+    font-size: 0.65rem;
+  }
+  
+  /* Main content */
+  .main-content {
+    padding: 0.8rem;
+    gap: 1rem;
+  }
+  
+  /* Form section - remove sticky on mobile */
+  .form-section {
+    position: relative;
+    top: auto;
+    padding: 1rem;
+  }
+  
+  .form-section h2 {
+    font-size: 1rem;
+  }
+  
+  .form-description {
+    font-size: 0.7rem;
+    margin-bottom: 0.8rem;
+  }
+  
+  .form-group {
+    margin-bottom: 0.7rem;
+  }
+  
+  .photo-label {
+    height: 80px;
+  }
+  
+  .text-input {
+    padding: 0.5rem 0.7rem;
+    font-size: 0.8rem;
+  }
+  
+  .download-btn {
+    padding: 0.65rem 0.8rem;
+    font-size: 0.85rem;
+  }
+  
+  /* Preview section */
+  .preview-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .preview-section h2 {
+    font-size: 1rem;
+    text-align: center;
+    width: 100%;
+  }
+  
+  .poster-wrapper {
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+  
+  /* POSTER - Fixed size for mobile */
+  .poster {
+    width: 320px;
+    height: 320px;
+  }
+  
+  /* Scale down ALL poster content proportionally */
+  .poster-content {
+    padding: 10px 12px 0 12px;
+  }
+  
+  .summit-badge {
+    padding: 5px 8px;
+    gap: 5px;
+    margin-bottom: 6px;
+    border-radius: 5px;
+  }
+  
+  .badge-logo {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .badge-pakistan {
+    font-size: 6px;
+    letter-spacing: 0.5px;
+  }
+  
+  .badge-summit {
+    font-size: 9px;
+  }
+  
+  .top-section {
+    gap: 10px;
+    margin-bottom: 8px;
+    margin-top: 6px;
+  }
+  
+  .photo-wrapper {
+    width: 90px;
+    height: 90px;
+  }
+  
+  .photo-ring-outer {
+    inset: -4px;
+  }
+  
+  .photo-ring-accent {
+    inset: -2px;
+    border-width: 2px;
+  }
+  
+  .photo-ring-white {
+    border-width: 3px;
+  }
+  
+  .photo-container {
+    inset: 3px;
+  }
+  
+  .photo-placeholder-poster svg {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .photo-badge {
+    padding: 3px 8px;
+    bottom: -3px;
+  }
+  
+  .photo-badge span {
+    font-size: 5px;
+    letter-spacing: 1px;
+  }
+  
+  .attendee-name {
+    font-size: 14px;
+    margin-bottom: 2px;
+  }
+  
+  .attendee-designation {
+    font-size: 10px;
+  }
+  
+  .attendee-company {
+    font-size: 8px;
+    margin-top: 1px;
+  }
+  
+  .attending-section {
+    padding: 6px 0;
+    margin-bottom: 6px;
+    border-radius: 6px;
+  }
+  
+  .attending-text {
+    font-size: 13px;
+    margin-bottom: 1px;
+  }
+  
+  .event-title {
+    font-size: 13px;
+  }
+  
+  .event-details-horizontal {
+    gap: 12px;
+    margin-bottom: 8px;
+    margin-left: 0;
+    justify-content: center;
+  }
+  
+  .detail-item {
+    gap: 5px;
+    flex: unset;
+  }
+  
+  .detail-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+  }
+  
+  .detail-icon svg {
+    width: 11px;
+    height: 11px;
+  }
+  
+  .detail-day {
+    font-size: 6px;
+  }
+  
+  .detail-date {
+    font-size: 8px;
+  }
+  
+  .detail-venue {
+    font-size: 7px;
+    line-height: 1.2;
+  }
+  
+  .poster-footer-white {
+    padding: 5px 10px;
+    gap: 8px;
+    min-height: 35px;
+    margin: 0 -12px;
+  }
+  
+  .sponsor-logo {
+    height: 16px;
+  }
+  
+  .sponsor-logo.dynamics {
+    height: 14px;
+  }
+  
+  .sponsor-logo.mazik {
+    height: 18px;
+  }
+  
+  .sponsor-logo.pug {
+    height: 22px;
+  }
+  
+  .footer-divider {
+    height: 18px;
+  }
+  
+  .community-text {
+    font-size: 5px;
+    max-width: 50px;
+  }
+  
+  /* Accent dots - scale down */
+  .dot-1 { width: 6px; height: 6px; }
+  .dot-2 { width: 4px; height: 4px; }
+  .dot-3 { width: 5px; height: 5px; }
+  .dot-4 { width: 3px; height: 3px; }
+  .dot-5 { width: 4px; height: 4px; }
+  .dot-6 { width: 3px; height: 3px; }
+  
+  /* Background circles - scale down */
+  .circle-1 {
+    width: 180px;
+    height: 180px;
+    bottom: 20px;
+    left: -60px;
+  }
+  
+  .circle-2 {
+    width: 150px;
+    height: 150px;
+    top: -50px;
+    right: -50px;
+  }
+  
+  .circle-3 {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .circle-4 {
+    width: 70px;
+    height: 70px;
+  }
+  
+  /* Wave patterns */
+  .wave-pattern {
+    height: 120px;
+  }
+  
+  .wave-1 {
+    bottom: 25px;
+  }
+  
+  .wave-2 {
+    bottom: 15px;
+  }
+  
+  /* App footer */
+  .footer {
+    padding: 0.7rem;
+    font-size: 0.6rem;
+  }
+}

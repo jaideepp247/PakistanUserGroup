@@ -28,12 +28,19 @@ function App() {
     
     setIsGenerating(true)
     try {
-      const dataUrl = await toPng(posterRef.current, {
+      // Get actual element dimensions
+      const element = posterRef.current
+      const rect = element.getBoundingClientRect()
+      
+      // Use higher pixelRatio for better quality, especially on mobile
+      const pixelRatio = window.devicePixelRatio > 1 ? 3 : 2
+      
+      const dataUrl = await toPng(element, {
         quality: 1,
-        pixelRatio: 2,
+        pixelRatio: pixelRatio,
         cacheBust: true,
-        width: 540,
-        height: 540,
+        width: rect.width,
+        height: rect.height,
       })
       
       const link = document.createElement('a')
