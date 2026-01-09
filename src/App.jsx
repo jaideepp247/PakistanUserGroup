@@ -22,7 +22,18 @@ function App() {
     }
   }
 
-  // Draw poster on Canvas and download
+  // Helper function to load image
+  const loadImage = (src) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image()
+      img.crossOrigin = 'anonymous'
+      img.onload = () => resolve(img)
+      img.onerror = reject
+      img.src = src
+    })
+  }
+
+  // Draw poster on Canvas and download - SIMPLE approach using background template
   const downloadPoster = async () => {
     if (!photoPreview) return
     
@@ -36,67 +47,49 @@ function App() {
       canvas.width = 1080
       canvas.height = 1080
       
-      // Draw gradient background
-      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height)
-      gradient.addColorStop(0, '#0033cc')
-      gradient.addColorStop(0.15, '#1a237e')
-      gradient.addColorStop(0.3, '#311b92')
-      gradient.addColorStop(0.45, '#4a148c')
-      gradient.addColorStop(0.55, '#6a1b9a')
-      gradient.addColorStop(0.65, '#8e24aa')
-      gradient.addColorStop(0.75, '#ab47bc')
-      gradient.addColorStop(0.85, '#c71585')
-      gradient.addColorStop(0.95, '#e91e63')
-      gradient.addColorStop(1, '#ff1493')
-      ctx.fillStyle = gradient
-      ctx.fillRect(0, 0, canvas.width, canvas.height)
+      // Load and draw background template
+      const background = await loadImage('/poster-template.png')
+      ctx.drawImage(background, 0, 0, canvas.width, canvas.height)
       
-      // Draw decorative circles (background)
-      ctx.globalAlpha = 0.1
+      // Draw user's circular photo - positioned in the empty circle on template
+      // Template circle: top ~200, radius ~120, so center Y = 200 + 120 = 320
+      const photo = await loadImage(photoPreview)
+      const photoX = 185  // Center X of photo circle
+      const photoY = 338  // Center Y of photo circle
+      const photoRadius = 134  // Radius to fit inside border
+      
+      ctx.save()
       ctx.beginPath()
-      ctx.arc(-100, canvas.height + 100, 400, 0, Math.PI * 2)
-      ctx.fillStyle = '#c71585'
-      ctx.fill()
+      ctx.arc(photoX, photoY, photoRadius, 0, Math.PI * 2)
+      ctx.closePath()
+      ctx.clip()
       
-      ctx.beginPath()
-      ctx.arc(canvas.width + 100, -100, 350, 0, Math.PI * 2)
-      ctx.fillStyle = '#0033cc'
-      ctx.fill()
+      // Calculate aspect ratio to cover the circle
+      const size = photoRadius * 2
+      const scale = Math.max(size / photo.width, size / photo.height)
+      const w = photo.width * scale
+      const h = photo.height * scale
+      ctx.drawImage(photo, photoX - w/2, photoY - h/2, w, h)
+      ctx.restore()
       
-      ctx.globalAlpha = 1
+      // Draw user's name - to the right of the photo, vertically centered with photo
+      // Photo center is at Y=336, so text centered around that
+      ctx.font = 'bold 48px Montserrat, Arial'
+      ctx.fillStyle = '#ffffff'
+      ctx.textAlign = 'left'
+      ctx.fillText(name || 'Your Name', 400, 306)
       
-      // Draw accent dots
-      const dots = [
-        { x: 950, y: 200, r: 10, color: '#ff1493' },
-        { x: 1000, y: 380, r: 6, color: '#00d4ff' },
-        { x: 1030, y: 550, r: 8, color: '#ffb73c' },
-        { x: 920, y: 450, r: 5, color: '#4ba7aa' },
-        { x: 980, y: 700, r: 7, color: '#ef5350' },
-      ]
-      dots.forEach(dot => {
-        ctx.beginPath()
-        ctx.arc(dot.x, dot.y, dot.r, 0, Math.PI * 2)
-        ctx.fillStyle = dot.color
-        ctx.fill()
-      })
+      // Draw designation
+      ctx.font = '600 28px Poppins, Arial'
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'
+      ctx.fillText(designation || 'Your Designation', 400, 356)
       
-      // Load and draw summit badge (white box with logo)
-      await drawSummitBadge(ctx)
-      
-      // Draw attendee photo
-      await drawAttendeePhoto(ctx, photoPreview)
-      
-      // Draw attendee details
-      drawAttendeeDetails(ctx, name, designation, company)
-      
-      // Draw "I will be attending" section
-      drawAttendingSection(ctx)
-      
-      // Draw event details
-      drawEventDetails(ctx)
-      
-      // Draw white footer with logos
-      await drawFooter(ctx)
+      // Draw company (if provided)
+      if (company) {
+        ctx.font = '24px Poppins, Arial'
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'
+        ctx.fillText(company, 400, 400)
+      }
       
       // Trigger download
       const dataUrl = canvas.toDataURL('image/png', 1.0)
@@ -113,287 +106,137 @@ function App() {
     setIsGenerating(false)
   }
 
-  // Helper function to load image
-  const loadImage = (src) => {
-    return new Promise((resolve, reject) => {
-      const img = new Image()
-      img.crossOrigin = 'anonymous'
-      img.onload = () => resolve(img)
-      img.onerror = reject
-      img.src = src
-    })
-  }
-
-  // Draw summit badge - matching live preview dimensions
-  const drawSummitBadge = async (ctx) => {
-    // White rounded rectangle - tighter fit like live preview
-    const x = 36, y = 36, w = 240, h = 90, r = 14
-    ctx.fillStyle = '#ffffff'
-    ctx.beginPath()
-    ctx.roundRect(x, y, w, h, r)
-    ctx.fill()
-    ctx.shadowColor = 'rgba(0,0,0,0.25)'
-    ctx.shadowBlur = 20
-    ctx.fill()
-    ctx.shadowBlur = 0
-    
-    // Draw logo - smaller to match preview
-    try {
-      const logo = await loadImage('/PUG_vertical.jpg')
-      ctx.drawImage(logo, x + 14, y + 13, 64, 64)
-    } catch (e) {
-      console.log('Logo load failed')
-    }
-    
-    // Draw text - adjusted positioning
-    ctx.fillStyle = '#127173'
-    ctx.font = 'bold 16px Montserrat, Arial'
-    ctx.fillText('PAKISTAN', x + 88, y + 38)
-    
-    ctx.fillStyle = '#4b0082'
-    ctx.font = 'bold 26px Montserrat, Arial'
-    ctx.fillText('UG SUMMIT', x + 88, y + 66)
-  }
-
-  // Draw circular attendee photo
-  const drawAttendeePhoto = async (ctx, photoSrc) => {
-    const centerX = 200
-    const centerY = 420
-    const radius = 145
-    
-    // Draw outer gradient ring
-    const gradient = ctx.createConicGradient(0, centerX, centerY)
-    gradient.addColorStop(0, 'rgba(0, 51, 204, 0.5)')
-    gradient.addColorStop(0.25, 'rgba(75, 0, 130, 0.5)')
-    gradient.addColorStop(0.5, 'rgba(199, 21, 133, 0.5)')
-    gradient.addColorStop(0.75, 'rgba(255, 20, 147, 0.5)')
-    gradient.addColorStop(1, 'rgba(0, 51, 204, 0.5)')
-    
-    ctx.beginPath()
-    ctx.arc(centerX, centerY, radius + 12, 0, Math.PI * 2)
-    ctx.fillStyle = gradient
-    ctx.fill()
-    
-    // Draw pink accent ring
-    ctx.beginPath()
-    ctx.arc(centerX, centerY, radius + 6, 0, Math.PI * 2)
-    ctx.strokeStyle = '#ff1493'
-    ctx.lineWidth = 6
-    ctx.globalAlpha = 0.7
-    ctx.stroke()
-    ctx.globalAlpha = 1
-    
-    // Draw white border
-    ctx.beginPath()
-    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2)
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.95)'
-    ctx.lineWidth = 8
-    ctx.stroke()
-    
-    // Draw photo in circle
-    try {
-      const photo = await loadImage(photoSrc)
-      ctx.save()
-      ctx.beginPath()
-      ctx.arc(centerX, centerY, radius - 8, 0, Math.PI * 2)
-      ctx.clip()
-      
-      // Calculate aspect ratio to cover the circle
-      const size = (radius - 8) * 2
-      const scale = Math.max(size / photo.width, size / photo.height)
-      const w = photo.width * scale
-      const h = photo.height * scale
-      ctx.drawImage(photo, centerX - w/2, centerY - h/2, w, h)
-      ctx.restore()
-    } catch (e) {
-      console.log('Photo load failed')
-    }
-    
-    // Draw ATTENDEE badge
-    ctx.save()
-    ctx.translate(centerX, centerY + radius + 10)
-    
-    // Badge background
-    const badgeW = 140, badgeH = 36
-    const badgeGradient = ctx.createLinearGradient(-badgeW/2, 0, badgeW/2, 0)
-    badgeGradient.addColorStop(0, '#0033cc')
-    badgeGradient.addColorStop(1, '#4b0082')
-    
-    ctx.fillStyle = badgeGradient
-    ctx.beginPath()
-    ctx.roundRect(-badgeW/2, -badgeH/2, badgeW, badgeH, 8)
-    ctx.fill()
-    
-    // Badge border
-    ctx.strokeStyle = 'rgba(255,255,255,0.3)'
-    ctx.lineWidth = 2
-    ctx.stroke()
-    
-    // Badge text
-    ctx.fillStyle = '#ffffff'
-    ctx.font = 'bold 16px Montserrat, Arial'
-    ctx.textAlign = 'center'
-    ctx.fillText('ATTENDEE', 0, 6)
-    ctx.restore()
-  }
-
-  // Draw attendee details
-  const drawAttendeeDetails = (ctx, name, designation, company) => {
-    const x = 380
-    const y = 350
-    
-    ctx.textAlign = 'left'
-    
-    // Name
-    ctx.fillStyle = '#ffffff'
-    ctx.font = 'bold 48px Montserrat, Arial'
-    ctx.fillText(name || 'Your Name', x, y)
-    
-    // Designation
-    ctx.font = '600 28px Poppins, Arial'
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'
-    ctx.fillText(designation || 'Your Designation', x, y + 50)
-    
-    // Company
-    if (company) {
-      ctx.font = '24px Poppins, Arial'
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'
-      ctx.fillText(company, x, y + 90)
-    }
-  }
-
-  // Draw "I will be attending" section
-  const drawAttendingSection = (ctx) => {
-    const centerX = 540
-    const y = 580
-    
-    // Semi-transparent box
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.08)'
-    ctx.beginPath()
-    ctx.roundRect(40, y - 30, 1000, 180, 20)
-    ctx.fill()
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)'
-    ctx.lineWidth = 2
-    ctx.stroke()
-    
-    ctx.textAlign = 'center'
-    
-    // "I will be attending"
-    ctx.font = 'italic 44px "Dancing Script", cursive, Arial'
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)'
-    ctx.fillText('I will be attending', centerX, y + 20)
-    
-    // "Pakistan User Group"
-    ctx.font = 'bold 44px Montserrat, Arial'
-    ctx.fillStyle = '#ffffff'
-    ctx.fillText('Pakistan User Group', centerX, y + 75)
-    
-    // "Summit 2026" with gradient effect
-    ctx.font = 'bold 44px Montserrat, Arial'
-    ctx.fillStyle = '#00d4ff'
-    ctx.fillText('Summit 2026', centerX, y + 130)
-  }
-
-  // Draw event details
-  const drawEventDetails = (ctx) => {
-    const y = 820
-    
-    // Date
-    ctx.textAlign = 'left'
-    
-    // Calendar icon background
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.1)'
-    ctx.beginPath()
-    ctx.roundRect(120, y - 25, 60, 60, 12)
-    ctx.fill()
-    
-    // Calendar icon (simplified)
-    ctx.fillStyle = '#00d4ff'
-    ctx.font = '32px Arial'
-    ctx.fillText('📅', 130, y + 18)
-    
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.6)'
-    ctx.font = '18px Poppins, Arial'
-    ctx.fillText('Saturday', 200, y)
-    
-    ctx.fillStyle = '#ffffff'
-    ctx.font = 'bold 22px Poppins, Arial'
-    ctx.fillText('10th January 2026', 200, y + 28)
-    
-    // Location icon background
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.1)'
-    ctx.beginPath()
-    ctx.roundRect(550, y - 25, 60, 60, 12)
-    ctx.fill()
-    
-    // Location icon
-    ctx.fillStyle = '#ff1493'
-    ctx.font = '32px Arial'
-    ctx.fillText('📍', 560, y + 18)
-    
-    ctx.fillStyle = '#ffffff'
-    ctx.font = '20px Poppins, Arial'
-    ctx.fillText('Innovista Indus, DHA', 630, y)
-    ctx.fillText('Library Karachi', 630, y + 28)
-  }
-
-  // Draw white footer with sponsor logos - matching live preview
-  const drawFooter = async (ctx) => {
-    const y = 925
-    const height = 155
-    
-    // White footer background
-    ctx.fillStyle = '#ffffff'
-    ctx.fillRect(0, y, 1080, height)
-    
-    // Draw sponsor logos - positioned like live preview
-    const logos = [
-      { src: '/1dynamics1.jpg', x: 60, w: 130, h: 45 },
-      { src: '/mazik.jpg', x: 220, w: 150, h: 50 },
-    ]
-    
-    for (const logo of logos) {
-      try {
-        const img = await loadImage(logo.src)
-        ctx.drawImage(img, logo.x, y + (height - logo.h) / 2, logo.w, logo.h)
-      } catch (e) {
-        console.log('Logo load failed:', logo.src)
-      }
-    }
-    
-    // Divider - positioned after mazik logo
-    ctx.fillStyle = '#e0e0e0'
-    ctx.fillRect(420, y + 35, 2, height - 70)
-    
-    // PUG logo - proper size like preview
-    try {
-      const pugLogo = await loadImage('/logo-header.png')
-      const logoSize = 65
-      ctx.drawImage(pugLogo, 455, y + (height - logoSize) / 2, logoSize, logoSize)
-    } catch (e) {
-      console.log('PUG logo load failed')
-    }
-    
-    // Pakistan User Group text - inline layout like preview
-    ctx.fillStyle = '#127173'
-    ctx.font = 'bold 22px Montserrat, Arial'
-    ctx.textAlign = 'left'
-    ctx.fillText('PAKISTAN', 535, y + 55)
-    ctx.fillText('USER GROUP', 535, y + 82)
-    
-    // Microsoft Tech Community - positioned to the right like preview
-    ctx.fillStyle = '#666666'
-    ctx.font = '13px Poppins, Arial'
-    ctx.fillText('Microsoft Tech', 720, y + 55)
-    ctx.fillText('Community', 720, y + 72)
-  }
-
+  const [showTemplate, setShowTemplate] = useState(false)
   const isFormValid = name.trim() && designation.trim() && photoPreview
 
   return (
     <div className="app-container">
       {/* Hidden canvas for generating poster */}
       <canvas ref={canvasRef} style={{ display: 'none' }} />
+      
+      {/* Template Mode Toggle - for taking screenshot */}
+      <div style={{ position: 'fixed', top: 10, right: 10, zIndex: 1000 }}>
+        <button 
+          onClick={() => setShowTemplate(!showTemplate)}
+          style={{ 
+            padding: '8px 16px', 
+            background: showTemplate ? '#ff1493' : '#333', 
+            color: 'white', 
+            border: 'none', 
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontSize: '12px'
+          }}
+        >
+          {showTemplate ? 'Exit Template Mode' : 'Show Template (for screenshot)'}
+        </button>
+      </div>
+      
+      {/* TEMPLATE MODE - Full screen poster for screenshot */}
+      {showTemplate && (
+        <div style={{ 
+          position: 'fixed', 
+          top: 0, 
+          left: 0, 
+          right: 0, 
+          bottom: 0, 
+          background: '#000', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          zIndex: 999
+        }}>
+          <div className="poster" style={{ transform: 'none' }}>
+            <div className="poster-bg"></div>
+            <div className="poster-gradient-overlay"></div>
+            <div className="wave-pattern wave-1"></div>
+            <div className="wave-pattern wave-2"></div>
+            <div className="wave-pattern wave-3"></div>
+            <div className="bg-circle circle-1"></div>
+            <div className="bg-circle circle-2"></div>
+            <div className="bg-circle circle-3"></div>
+            <div className="bg-circle circle-4"></div>
+            <div className="accent-dot dot-1"></div>
+            <div className="accent-dot dot-2"></div>
+            <div className="accent-dot dot-3"></div>
+            <div className="accent-dot dot-4"></div>
+            <div className="accent-dot dot-5"></div>
+            <div className="accent-dot dot-6"></div>
+            
+            <div className="poster-content">
+              <div className="summit-badge">
+                <img src="/PUG_vertical.jpg" alt="PUG" className="badge-logo" />
+                <div className="badge-text">
+                  <span className="badge-pakistan">PAKISTAN</span>
+                  <span className="badge-summit">UG SUMMIT</span>
+                </div>
+              </div>
+
+              <div className="top-section">
+                <div className="photo-wrapper">
+                  <div className="photo-ring-outer"></div>
+                  <div className="photo-ring-accent"></div>
+                  <div className="photo-ring-white"></div>
+                  <div className="photo-container">
+                    {/* Empty for template */}
+                  </div>
+                  <div className="photo-badge">
+                    <span>ATTENDEE</span>
+                  </div>
+                </div>
+                <div className="attendee-details">
+                  {/* Empty for template - user photo/text will be overlaid */}
+                </div>
+              </div>
+
+              <div className="attending-section">
+                <p className="attending-text">I will be attending</p>
+                <h1 className="event-title">Pakistan User Group</h1>
+                <h1 className="event-title highlight">Summit 2026</h1>
+              </div>
+
+              <div className="event-details-horizontal">
+                <div className="detail-item">
+                  <div className="detail-icon calendar">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M3 10h18" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M8 2v4M16 2v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                      <circle cx="12" cy="15" r="1.5" fill="currentColor"/>
+                    </svg>
+                  </div>
+                  <div className="detail-content">
+                    <span className="detail-day">Saturday</span>
+                    <span className="detail-date">10th January 2026</span>
+                  </div>
+                </div>
+                <div className="detail-item">
+                  <div className="detail-icon location">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    </svg>
+                  </div>
+                  <div className="detail-content">
+                    <span className="detail-venue">Innovista Indus, DHA</span>
+                    <span className="detail-venue">Library Karachi</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="poster-footer-white">
+                <img src="/1dynamics1.jpg" alt="1Dynamics" className="sponsor-logo dynamics" />
+                <img src="/mazik.jpg" alt="Mazik Global" className="sponsor-logo mazik" />
+                <div className="footer-divider"></div>
+                <img src="/logo-header.png" alt="PUG" className="sponsor-logo pug" />
+                <span className="community-text">Microsoft Tech Community</span>
+              </div>
+            </div>
+          </div>
+          <p style={{ position: 'absolute', bottom: 20, color: 'white', fontSize: '14px' }}>
+            Take a screenshot of this poster (540x540) and save to public folder as "poster-template.png"
+          </p>
+        </div>
+      )}
       
       <header className="header">
         <div className="header-content">
