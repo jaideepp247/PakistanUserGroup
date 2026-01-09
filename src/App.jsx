@@ -124,10 +124,10 @@ function App() {
     })
   }
 
-  // Draw summit badge
+  // Draw summit badge - matching live preview dimensions
   const drawSummitBadge = async (ctx) => {
-    // White rounded rectangle - extra wide to fit "UG SUMMIT" fully with padding
-    const x = 36, y = 36, w = 310, h = 100, r = 16
+    // White rounded rectangle - tighter fit like live preview
+    const x = 36, y = 36, w = 240, h = 90, r = 14
     ctx.fillStyle = '#ffffff'
     ctx.beginPath()
     ctx.roundRect(x, y, w, h, r)
@@ -137,22 +137,22 @@ function App() {
     ctx.fill()
     ctx.shadowBlur = 0
     
-    // Draw logo
+    // Draw logo - smaller to match preview
     try {
       const logo = await loadImage('/PUG_vertical.jpg')
-      ctx.drawImage(logo, x + 16, y + 16, 68, 68)
+      ctx.drawImage(logo, x + 14, y + 13, 64, 64)
     } catch (e) {
       console.log('Logo load failed')
     }
     
-    // Draw text
+    // Draw text - adjusted positioning
     ctx.fillStyle = '#127173'
-    ctx.font = 'bold 18px Montserrat, Arial'
-    ctx.fillText('PAKISTAN', x + 95, y + 42)
+    ctx.font = 'bold 16px Montserrat, Arial'
+    ctx.fillText('PAKISTAN', x + 88, y + 38)
     
     ctx.fillStyle = '#4b0082'
-    ctx.font = 'bold 28px Montserrat, Arial'
-    ctx.fillText('UG SUMMIT', x + 95, y + 72)
+    ctx.font = 'bold 26px Montserrat, Arial'
+    ctx.fillText('UG SUMMIT', x + 88, y + 66)
   }
 
   // Draw circular attendee photo
@@ -337,7 +337,7 @@ function App() {
     ctx.fillText('Library Karachi', 630, y + 28)
   }
 
-  // Draw white footer with sponsor logos
+  // Draw white footer with sponsor logos - matching live preview
   const drawFooter = async (ctx) => {
     const y = 925
     const height = 155
@@ -346,10 +346,10 @@ function App() {
     ctx.fillStyle = '#ffffff'
     ctx.fillRect(0, y, 1080, height)
     
-    // Draw sponsor logos
+    // Draw sponsor logos - positioned like live preview
     const logos = [
-      { src: '/1dynamics1.jpg', x: 80, w: 120, h: 50 },
-      { src: '/mazik.jpg', x: 250, w: 140, h: 55 },
+      { src: '/1dynamics1.jpg', x: 60, w: 130, h: 45 },
+      { src: '/mazik.jpg', x: 220, w: 150, h: 50 },
     ]
     
     for (const logo of logos) {
@@ -361,31 +361,31 @@ function App() {
       }
     }
     
-    // Divider
+    // Divider - positioned after mazik logo
     ctx.fillStyle = '#e0e0e0'
-    ctx.fillRect(460, y + 30, 2, height - 60)
+    ctx.fillRect(420, y + 35, 2, height - 70)
     
-    // PUG logo - square aspect ratio to avoid distortion
+    // PUG logo - proper size like preview
     try {
       const pugLogo = await loadImage('/logo-header.png')
-      // Draw as square to maintain proper aspect ratio
-      const logoSize = 70
-      ctx.drawImage(pugLogo, 490, y + (height - logoSize) / 2, logoSize, logoSize)
+      const logoSize = 65
+      ctx.drawImage(pugLogo, 455, y + (height - logoSize) / 2, logoSize, logoSize)
     } catch (e) {
       console.log('PUG logo load failed')
     }
     
-    // Pakistan User Group text
-    ctx.fillStyle = '#333333'
-    ctx.font = 'bold 20px Montserrat, Arial'
+    // Pakistan User Group text - inline layout like preview
+    ctx.fillStyle = '#127173'
+    ctx.font = 'bold 22px Montserrat, Arial'
     ctx.textAlign = 'left'
-    ctx.fillText('PAKISTAN', 575, y + 50)
-    ctx.fillText('USER GROUP', 575, y + 76)
+    ctx.fillText('PAKISTAN', 535, y + 55)
+    ctx.fillText('USER GROUP', 535, y + 82)
     
-    // Microsoft Tech Community
+    // Microsoft Tech Community - positioned to the right like preview
     ctx.fillStyle = '#666666'
-    ctx.font = '14px Poppins, Arial'
-    ctx.fillText('Microsoft Tech Community', 590, y + 110)
+    ctx.font = '13px Poppins, Arial'
+    ctx.fillText('Microsoft Tech', 720, y + 55)
+    ctx.fillText('Community', 720, y + 72)
   }
 
   const isFormValid = name.trim() && designation.trim() && photoPreview
