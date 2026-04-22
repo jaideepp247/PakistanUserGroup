@@ -109,6 +109,14 @@ function App() {
   const [showTemplate, setShowTemplate] = useState(false)
   const isFormValid = name.trim() && designation.trim() && photoPreview
 
+  const resetForm = () => {
+    setName('')
+    setDesignation('')
+    setCompany('')
+    setPhoto(null)
+    setPhotoPreview(null)
+  }
+
   return (
     <div className="app-container">
       {/* Hidden canvas for generating poster */}
@@ -290,10 +298,12 @@ function App() {
               type="text"
               id="name"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => setName(e.target.value.slice(0, 50))}
               placeholder="e.g., Jai Deep"
               className="text-input"
+              maxLength={50}
             />
+            <span className="char-counter">{name.length}/50</span>
           </div>
 
           <div className="form-group">
@@ -340,6 +350,14 @@ function App() {
                 Download Poster
               </>
             )}
+          </button>
+
+          <button
+            onClick={resetForm}
+            className="reset-btn"
+            type="button"
+          >
+            Reset Form
           </button>
 
           <p className="quality-note">✨ HD 1080×1080 for social media</p>

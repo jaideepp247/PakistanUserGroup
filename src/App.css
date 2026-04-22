@@ -211,6 +211,35 @@
 .download-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .download-btn svg { width: 18px; height: 18px; }
 
+.reset-btn {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.85rem;
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.4rem;
+}
+
+.reset-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.char-counter {
+  display: block;
+  text-align: right;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 0.2rem;
+}
+
 .spinner {
   width: 16px;
   height: 16px;
