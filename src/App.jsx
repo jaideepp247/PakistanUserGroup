@@ -324,6 +324,7 @@ function App() {
             onClick={downloadPoster}
             disabled={!isFormValid || isGenerating}
             className="download-btn"
+            aria-label="Download your personalized attendee poster"
           >
             {isGenerating ? (
               <>
@@ -342,7 +343,7 @@ function App() {
             )}
           </button>
 
-          <p className="quality-note">✨ HD 1080×1080 for social media</p>
+          <p className="quality-note">✨ HD 1080×1080px for social media</p>
         </div>
 
         <div className="preview-section">
