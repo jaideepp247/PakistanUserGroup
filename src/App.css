@@ -229,6 +229,33 @@
   color: rgba(255, 255, 255, 0.4);
 }
 
+/* Reset Button */
+.reset-btn {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.8rem;
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.4rem;
+}
+
+.reset-btn:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.reset-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
 /* =============================================
    PREVIEW SECTION
    ============================================= */

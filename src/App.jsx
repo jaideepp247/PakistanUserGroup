@@ -9,6 +9,16 @@ function App() {
   const [photoPreview, setPhotoPreview] = useState(null)
   const [isGenerating, setIsGenerating] = useState(false)
   const canvasRef = useRef(null)
+  const photoInputRef = useRef(null)
+
+  const resetForm = () => {
+    setName('')
+    setDesignation('')
+    setCompany('')
+    setPhoto(null)
+    setPhotoPreview(null)
+    if (photoInputRef.current) photoInputRef.current.value = ''
+  }
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0]
@@ -263,6 +273,7 @@ function App() {
               <input
                 type="file"
                 id="photo"
+                ref={photoInputRef}
                 accept="image/*"
                 onChange={handlePhotoChange}
                 className="photo-input"
@@ -291,8 +302,9 @@ function App() {
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g., Jai Deep"
+              placeholder="e.g., Ahmed Khan"
               className="text-input"
+              maxLength={40}
             />
           </div>
 
@@ -305,6 +317,7 @@ function App() {
               onChange={(e) => setDesignation(e.target.value)}
               placeholder="e.g., DevOps Engineer"
               className="text-input"
+              maxLength={50}
             />
           </div>
 
@@ -340,6 +353,14 @@ function App() {
                 Download Poster
               </>
             )}
+          </button>
+
+          <button
+            onClick={resetForm}
+            disabled={isGenerating}
+            className="reset-btn"
+          >
+            Reset Form
           </button>
 
           <p className="quality-note">✨ HD 1080×1080 for social media</p>
@@ -465,7 +486,7 @@ function App() {
       </main>
 
       <footer className="footer">
-        <p>© 2026 Pakistan User Group. Made with ❤️ for the community.</p>
+        <p>© 2026 Pakistan User Group. Made with ❤️ for the community. All rights reserved.</p>
       </footer>
     </div>
   )
