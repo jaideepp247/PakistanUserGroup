@@ -298,7 +298,7 @@ function App() {
               type="text"
               id="name"
               value={name}
-              onChange={(e) => setName(e.target.value.slice(0, 50))}
+              onChange={(e) => setName(e.target.value)}
               placeholder="e.g., Jai Deep"
               className="text-input"
               maxLength={50}
