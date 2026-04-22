@@ -14,7 +14,7 @@ jobs:
       - name: Request Copilot Review
         run: |
           gh pr edit ${{ github.event.pull_request.number }} \
-            --add-reviewer copilot-pull-request-reviewer[bot] \
+            --add-reviewer @copilot \
             --repo ${{ github.repository }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
